@@ -39,10 +39,15 @@ std::ostream& operator<<(std::ostream& os, const Point<D>& point) {
   return os;
 }
 
+template <size_t D>
+bool operator==(const Point<D>& lhs, const Point<D>& rhs) {
+  return lhs.coordinates_ == rhs.coordinates_;
+}
+
+namespace std {
 /*
  * Make our Point class hashable
  */
-namespace std {
 template <size_t D>
 struct hash<Point<D>> {
   size_t operator()(const Point<D>& x) const {
@@ -50,6 +55,14 @@ struct hash<Point<D>> {
     return hash<array<double, D>>()(x.coordinates_);
   }
 };
+
+/*
+ * Also make it swappable for sorting
+ */
+template <size_t D>
+void swap(Point<D>& lhs, Point<D>& rhs) {
+  swap(lhs.coordinates_, rhs.coordinates_);
+}
 }
 
 #endif  // POINT_HPP
