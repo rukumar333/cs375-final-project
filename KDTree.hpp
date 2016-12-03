@@ -9,7 +9,6 @@ private:
     class KDTreeNode{
     public:
 	std::vector<int> point;
-	// bool isLeaf = false;
 	int axis;
 	int value;
 	KDTreeNode * left;
@@ -26,6 +25,7 @@ public:
     ~KDTree();
     void deleteNode(KDTreeNode * node);
     void createTree(std::vector<std::vector<int> > points, KDTreeNode * treeRoot);
+    bool isLeaf(KDTreeNode * node);
 };
 
 #endif

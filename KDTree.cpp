@@ -44,3 +44,7 @@ void KDTree::createTree(std::vector<std::vector<int> > points, KDTreeNode * tree
 	treeRoot->point = points[0];
     }
 }
+
+bool KDTree::isLeaf(KDTreeNode * node){
+    return node->left == nullptr && node->right == nullptr;
+}
