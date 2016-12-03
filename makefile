@@ -1,10 +1,12 @@
-FLAGS = -std=c++11 -g
+CXX := g++
+CXXFLAGS := -g -std=c++11 -Wall -Wextra -pedantic
+LDFLAGS :=
 
 all: main.o KDTree.o
-	g++ $(FLAGS) main.o KDTree.o -o main.exe
+	$(CXX) $(LDFLAGS) main.o KDTree.o -o main.exe
 
 main.o: main.cpp
-	g++ $(FLAGS) -c main.cpp
+	$(CXX) $(CXXFLAGS) -c main.cpp
 
 KDTree.o: KDTree.cpp KDTree.hpp
-	g++ $(FLAGS) -c KDTree.cpp
+	$(CXX) $(CXXFLAGS) -c KDTree.cpp
