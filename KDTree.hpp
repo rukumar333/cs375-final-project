@@ -1,3 +1,6 @@
+#ifndef KDTREE_HPP
+#define KDTREE_HPP
+
 #include <vector>
 #include <algorithm>
 
@@ -20,5 +23,9 @@ public:
     int dimensions;
     KDTreeNode * root;
     KDTree(std::vector<std::vector<int> > points, int dimensions);
+    ~KDTree();
+    void deleteNode(KDTreeNode * node);
     void createTree(std::vector<std::vector<int> > points, KDTreeNode * treeRoot);
 };
+
+#endif
