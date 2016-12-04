@@ -7,6 +7,11 @@
 #include <iostream>
 
 template <size_t D>
+struct Point;
+template <size_t D>
+double distance(const Point<D>&, const Point<D>&);
+
+template <size_t D>
 struct Point {
   Point(std::initializer_list<double> v) {
     size_t i = 0;
@@ -15,12 +20,13 @@ struct Point {
     }
   }
 
-  double operator[](size_t dimension) { return coordinates_[dimension]; }
-  double distance(const Point& other) { return distance(*this, other); }
-
+  double operator[](size_t dimension) const { return coordinates_[dimension]; }
   std::array<double, D> coordinates_;
 };
 
+/*
+ * Finds euclidian distance between two Point classes of same dimension
+ */
 template <size_t D>
 double distance(const Point<D>& lhs, const Point<D>& rhs) {
   double dist = 0;
@@ -29,6 +35,10 @@ double distance(const Point<D>& lhs, const Point<D>& rhs) {
   return dist;
 }
 
+/*
+ * Print the point components of a Point in ascending order.
+ * Prints in the form {x, y, z} with no newline.
+ */
 template <size_t D>
 std::ostream& operator<<(std::ostream& os, const Point<D>& point) {
   os << "{";
