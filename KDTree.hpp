@@ -34,6 +34,7 @@ class KDTree {
     KDTreeNode* right;
   };
 
+
  public:
   KDTreeNode* root;
 
@@ -108,3 +109,5 @@ class KDTree {
 };
 
 #endif
+
+//{-36.8033, -27.1832, 88.0916}
