@@ -31,7 +31,7 @@ template <size_t D>
 double distance(const Point<D>& lhs, const Point<D>& rhs) {
   double dist = 0;
   for (size_t i = 0; i < D; i++)
-    dist += sqrt(abs(pow(2, lhs[i]) - pow(2, rhs[i])));
+    dist += sqrt(std::abs(pow(2, lhs[i]) - pow(2, rhs[i])));
   return dist;
 }
 
