@@ -47,6 +47,32 @@ std::vector<Point<D>> brute_force(const Point<D>& point,
   return nearest;
 }
 
+template <size_t D>
+Point<D> kd_tree_nns(const Point<D>& point,
+		     KDTree<D>& kdTree){
+    return kdTree.nns(point);
+}
+
+template <size_t D>
+Point<D> run_kd_test(const Point<D>& point, std::vector<Point<D>> neighbors){
+    // Remove the original point from the cloud
+    auto it = std::find(neighbors.begin(), neighbors.end(), point);
+    if(it != neighbors.end()) neighbors.erase(it);
+    KDTree<D> kdTree(neighbors);
+    // Only time the search, not the construction of the tree
+    // Timer code -> Will can you put this in the decorator?
+    std::chrono::time_point<std::chrono::system_clock> start, end;
+    start = std::chrono::system_clock::now();
+    Point<D> nearestNeighbor = kd_tree_nns(point, kdTree);
+    end = std::chrono::system_clock::now();
+    std::chrono::nanoseconds elapsed_nanos =
+        std::chrono::duration_cast<std::chrono::nanoseconds>(end - start);
+    std::cout << "Execution took " << elapsed_nanos.count() << "ns"
+              << std::endl;
+    // End timer code
+    return nearestNeighbor;
+}
+
 /* http://stackoverflow.com/questions/30679445/python-like-c-decorators */
 template <typename R, typename... Args>
 struct Decorator<R(Args...)> {
