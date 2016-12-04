@@ -11,21 +11,21 @@ struct Point;
 
 template <size_t D>
 struct Point {
-    Point(std::initializer_list<double> v) {
-	size_t i = 0;
-	for (auto e : v) {
-	    coordinates_[i++] = e;
-	}
+  Point(std::initializer_list<double> v) {
+    size_t i = 0;
+    for (auto e : v) {
+      coordinates_[i++] = e;
     }
+  }
 
-    explicit Point(const std::array<double, D>& arr) : coordinates_{arr} {}
+  explicit Point(const std::array<double, D>& arr) : coordinates_{arr} {}
 
-    double operator[](size_t dimension) const { return coordinates_[dimension]; }
-    Point<D>& operator=(const Point& other){
-	this->coordinates_ = other.coordinates_;
-	return *this;
-    }
-    std::array<double, D> coordinates_;
+  double operator[](size_t dimension) const { return coordinates_[dimension]; }
+  Point<D>& operator=(const Point& other) {
+    this->coordinates_ = other.coordinates_;
+    return *this;
+  }
+  std::array<double, D> coordinates_;
 };
 
 /*
@@ -41,9 +41,9 @@ double distance(const Point<D>& lhs, const Point<D>& rhs) {
 /*
  * Finds euclidian distance between Point and axis
  */
-template<size_t D>
-double distance(const Point<D>& point, int value, int axis){
-    return std::abs(point[axis] - value);
+template <size_t D>
+double distance(const Point<D>& point, int value, int axis) {
+  return std::abs(point[axis] - value);
 }
 
 /*
@@ -84,6 +84,6 @@ template <size_t D>
 void swap(Point<D>& lhs, Point<D>& rhs) {
   swap(lhs.coordinates_, rhs.coordinates_);
 }
-}
+}  // namespace std
 
 #endif  // POINT_HPP

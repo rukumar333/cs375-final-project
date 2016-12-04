@@ -1,5 +1,5 @@
 CXX ?= g++
-CXXFLAGS := -g -std=c++11 -Wall -Wextra -pedantic
+CXXFLAGS := -g -O3 -std=c++11 -Wall -Wextra -pedantic
 LDFLAGS :=
 
 all: main.o NearestNeighbor.o

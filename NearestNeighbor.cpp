@@ -1,17 +1,21 @@
 #include "NearestNeighbor.hpp"
 
 void run_tests() {
-  auto cloud = generate_point_cloud<3>(10000, {-100.0, 100.0});
+  auto cloud = generate_point_cloud<3>(3e3, {-100.0, 100.0});
+  auto point = random_point<3>({-100.0, 100.0});
   std::cout << "---------- Brute Force Method ---------- " << std::endl;
-  auto v = makeDecorator(brute_force<3>)(cloud[0], cloud, 2);
-  std::cout << "Closest points to " << cloud[0] << std::endl;
+  auto v = makeDecorator(brute_force<3>)(point, cloud, 1);
+  std::cout << "Closest points to " << point << std::endl;
   for (auto e : v) {
     std::cout << e << std::endl;
-    std::cout << "Distance: " << distance(cloud[0], e) << std::endl;
+    std::cout << "Distance: " << distance(point, e) << std::endl;
   }
   std::cout << "---------- KD-Tree Method ---------- " << std::endl;
-  auto nearestNeighbor = run_kd_test(cloud[0], cloud);
-  std::cout << "Closest point to " << cloud[0] << std::endl;  
+  std::cout << "> Constructing tree..." << std::endl;
+  auto kdTree = makeDecorator(initialize_kd_tree<3>)(cloud);
+  std::cout << "> Running NNS algorithm..." << std::endl;
+  auto nearestNeighbor = makeDecorator(kd_tree_nns<3>)(point, kdTree);
+  std::cout << "Closest point to " << point << std::endl;
   std::cout << nearestNeighbor << std::endl;
-  std::cout << "Distance: " << distance(cloud[0], nearestNeighbor) << std::endl;
+  std::cout << "Distance: " << distance(point, nearestNeighbor) << std::endl;
 }
