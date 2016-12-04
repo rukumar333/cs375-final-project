@@ -14,9 +14,9 @@ private:
 	/* Constructors */
 	KDTreeNode() : KDTreeNode{0, 0} {}
 	KDTreeNode(int axis) : KDTreeNode{axis, 0} {}
-	KDTreeNode(int axis, int value)
+	KDTreeNode(int axis, double value)
 	    : KDTreeNode{{}, axis, value, nullptr, nullptr} {}
-	KDTreeNode(const Point<D>& point, int axis, int value, KDTreeNode* left,
+	KDTreeNode(const Point<D>& point, int axis, double value, KDTreeNode* left,
 		   KDTreeNode* right)
 	    : point{point}, axis{axis}, value{value}, left{left}, right{right} {}
 	/**
@@ -31,7 +31,7 @@ private:
 	}
 	Point<D> point;
 	int axis;
-	int value;
+	double value;
 	KDTreeNode* left;
 	KDTreeNode* right;
     };
@@ -110,3 +110,5 @@ public:
 };
 
 #endif
+
+//{-36.8033, -27.1832, 88.0916}
