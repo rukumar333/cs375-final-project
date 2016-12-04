@@ -42,7 +42,7 @@ double distance(const Point<D>& lhs, const Point<D>& rhs) {
  * Finds euclidian distance between Point and axis
  */
 template <size_t D>
-double distance(const Point<D>& point, int value, int axis) {
+double distance(const Point<D>& point, double value, int axis) {
   return std::abs(point[axis] - value);
 }
 

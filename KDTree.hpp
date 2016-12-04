@@ -14,9 +14,9 @@ class KDTree {
     /* Constructors */
     KDTreeNode() : KDTreeNode{0, 0} {}
     KDTreeNode(int axis) : KDTreeNode{axis, 0} {}
-    KDTreeNode(int axis, int value)
+    KDTreeNode(int axis, double value)
         : KDTreeNode{{}, axis, value, nullptr, nullptr} {}
-    KDTreeNode(const Point<D>& point, int axis, int value, KDTreeNode* left,
+    KDTreeNode(const Point<D>& point, int axis, double value, KDTreeNode* left,
                KDTreeNode* right)
         : point{point}, axis{axis}, value{value}, left{left}, right{right} {}
     /**
@@ -26,10 +26,10 @@ class KDTree {
       if (left != nullptr) delete left;
       if (right != nullptr) delete right;
     }
-    bool isLeaf() { return left == nullptr && right == nullptr; }
+    bool isLeaf() const { return left == nullptr && right == nullptr; }
     Point<D> point;
     int axis;
-    int value;
+    double value;
     KDTreeNode* left;
     KDTreeNode* right;
   };
@@ -41,7 +41,9 @@ class KDTree {
     createTree(points, root);
   }
 
-  ~KDTree() { delete root; }
+  ~KDTree() {
+    if (root != nullptr) delete root;
+  }
 
   void deleteNode(KDTreeNode* node) {
     if (node != nullptr) delete node;
@@ -83,23 +85,22 @@ class KDTree {
 
   void nnsRecurse(const Point<D>& point, KDTreeNode* node, double& radius,
                   Point<D>& nearestNeighbor) {
-    if (node != nullptr) {
-      if (node->isLeaf()) {
-        double pointsDistance = distance(point, node->point);
-        if (radius > pointsDistance) {
-          radius = pointsDistance;
-          nearestNeighbor = node->point;
-        }
-      } else {
-        // Check if hypersphere includes hyperplane
-        if (distance(point, node->value, node->axis) < radius) {
-          if (point[node->axis] < node->value) {
-            nnsRecurse(point, node->left, radius, nearestNeighbor);
-            nnsRecurse(point, node->right, radius, nearestNeighbor);
-          } else {
-            nnsRecurse(point, node->right, radius, nearestNeighbor);
-            nnsRecurse(point, node->left, radius, nearestNeighbor);
-          }
+    if (node == nullptr) return;
+    if (node->isLeaf()) {
+      double pointsDistance = distance(point, node->point);
+      if (radius > pointsDistance) {
+        radius = pointsDistance;
+        nearestNeighbor = node->point;
+      }
+    } else {
+      // Check if hypersphere includes hyperplane
+      if (distance(point, node->value, node->axis) < radius) {
+        if (point[node->axis] < node->value) {
+          nnsRecurse(point, node->left, radius, nearestNeighbor);
+          nnsRecurse(point, node->right, radius, nearestNeighbor);
+        } else {
+          nnsRecurse(point, node->right, radius, nearestNeighbor);
+          nnsRecurse(point, node->left, radius, nearestNeighbor);
         }
       }
     }
