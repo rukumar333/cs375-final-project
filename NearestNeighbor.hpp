@@ -1,6 +1,8 @@
 #include <algorithm>
 #include <chrono>
 #include <functional>
+#include <random>
+#include <utility>
 #include <vector>
 #include "KDTree.hpp"
 
@@ -8,6 +10,24 @@ template <typename>
 struct Decorator;
 
 void run_tests();
+
+template <size_t D>
+std::vector<Point<D>> generate_point_cloud(
+    size_t number, const std::pair<double, double>& range) {
+  std::random_device r;
+  std::default_random_engine e1(r());
+  std::uniform_real_distribution<double> uniform_dist{range.first,
+                                                      range.second};
+  std::vector<Point<D>> ret;
+  for (size_t i = 0; i < number; i++) {
+    std::array<double, D> components;
+    for (size_t j = 0; j < D; j++) {
+      components[j] = uniform_dist(e1);
+    }
+    ret.emplace_back(components);
+  }
+  return ret;
+}
 
 template <size_t D>
 std::vector<Point<D>> brute_force(const Point<D>& point,
@@ -18,7 +38,7 @@ std::vector<Point<D>> brute_force(const Point<D>& point,
   for (size_t i = 0; i < num; i++) {
     auto neighbor =
         std::min_element(neighbors.begin(), neighbors.end(),
-                         [point](const Point<D> lhs, const Point<D> rhs) {
+                         [point](const Point<D>& lhs, const Point<D>& rhs) {
                            return distance(point, lhs) < distance(point, rhs);
                          });
     nearest.push_back(*neighbor);

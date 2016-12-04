@@ -8,8 +8,6 @@
 
 template <size_t D>
 struct Point;
-template <size_t D>
-double distance(const Point<D>&, const Point<D>&);
 
 template <size_t D>
 struct Point {
@@ -19,6 +17,8 @@ struct Point {
       coordinates_[i++] = e;
     }
   }
+
+  explicit Point(const std::array<double, D>& arr) : coordinates_{arr} {}
 
   double operator[](size_t dimension) const { return coordinates_[dimension]; }
   std::array<double, D> coordinates_;
@@ -30,9 +30,8 @@ struct Point {
 template <size_t D>
 double distance(const Point<D>& lhs, const Point<D>& rhs) {
   double dist = 0;
-  for (size_t i = 0; i < D; i++)
-    dist += sqrt(std::abs(pow(2, lhs[i]) - pow(2, rhs[i])));
-  return dist;
+  for (size_t i = 0; i < D; i++) dist += std::pow(lhs[i] - rhs[i], 2);
+  return std::sqrt(dist);
 }
 
 /*
