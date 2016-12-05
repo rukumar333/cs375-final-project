@@ -5,9 +5,6 @@ LDFLAGS :=
 all: main.o NearestNeighbor.o
 	$(CXX) $(LDFLAGS) main.o NearestNeighbor.o -o main.exe
 
-gdb: all gdbcmds.txt
-	gdb -x gdbcmds.txt ./main.exe
-
 main.o: main.cpp KDTree.hpp Point.hpp
 	$(CXX) $(CXXFLAGS) -c main.cpp
 

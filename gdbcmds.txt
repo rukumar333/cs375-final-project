@@ -1,3 +1,0 @@
-b NearestNeighbor.cpp:18
-run
-b KDTree.hpp:89
