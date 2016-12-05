@@ -21,6 +21,10 @@ struct Point {
   explicit Point(const std::array<double, D>& arr) : coordinates_{arr} {}
 
   double operator[](size_t dimension) const { return coordinates_[dimension]; }
+  Point<D>& operator=(const Point& other) {
+    this->coordinates_ = other.coordinates_;
+    return *this;
+  }
   std::array<double, D> coordinates_;
 };
 
@@ -32,6 +36,14 @@ double distance(const Point<D>& lhs, const Point<D>& rhs) {
   double dist = 0;
   for (size_t i = 0; i < D; i++) dist += std::pow(lhs[i] - rhs[i], 2);
   return std::sqrt(dist);
+}
+
+/*
+ * Finds euclidian distance between Point and axis
+ */
+template <size_t D>
+double distance(const Point<D>& point, double value, int axis) {
+  return std::abs(point[axis] - value);
 }
 
 /*
@@ -72,6 +84,6 @@ template <size_t D>
 void swap(Point<D>& lhs, Point<D>& rhs) {
   swap(lhs.coordinates_, rhs.coordinates_);
 }
-}
+}  // namespace std
 
 #endif  // POINT_HPP
