@@ -12,13 +12,15 @@ private:
     class KDTreeNode {
     public:
 	/* Constructors */
-	KDTreeNode() : KDTreeNode{0, 0} {}
-	KDTreeNode(int axis) : KDTreeNode{axis, 0} {}
-	KDTreeNode(int axis, double value)
-	    : KDTreeNode{{}, axis, value, nullptr, nullptr} {}
-	KDTreeNode(const Point<D>& point, int axis, double value, KDTreeNode* left,
-		   KDTreeNode* right)
-	    : point{point}, axis{axis}, value{value}, left{left}, right{right} {}
+    KDTreeNode() : KDTreeNode{0, 0} {}
+    KDTreeNode(int axis) : KDTreeNode{axis, 0} {}
+    KDTreeNode(int axis, double value)
+        : KDTreeNode{{}, axis, value, nullptr, nullptr} {}
+    KDTreeNode(int axis, Point<D> point)
+        : KDTreeNode{point, axis, point[axis], nullptr, nullptr} {}
+    KDTreeNode(const Point<D>& point, int axis, double value, KDTreeNode* left,
+               KDTreeNode* right)
+        : point{point}, axis{axis}, value{value}, left{left}, right{right} {}
 	/**
 	 * Deep destructor
 	 */
@@ -38,9 +40,7 @@ private:
 public:
     KDTreeNode* root;
 
-    KDTree(std::vector<Point<D> > points) : root{new KDTreeNode{0}} {
-	createTree(points, root);
-    }
+  KDTree(std::vector<Point<D>> points) : root{createTree(points, 0)} {}
 
     ~KDTree() {
 	if (root != nullptr) delete root;
@@ -50,32 +50,26 @@ public:
 	if (node != nullptr) delete node;
     }
 
-    void createTree(std::vector<Point<D> > points, KDTreeNode* treeRoot) {
-	if (points.size() > 1) {
-	    std::sort(points.begin(), points.end(),
-		      [treeRoot](const Point<D>& a, const Point<D>& b) {
-			  return a[treeRoot->axis] < b[treeRoot->axis];
-		      });
-	    int middleIndex = (points.size() / 2);
-	    treeRoot->value = points[middleIndex][treeRoot->axis];
-	    int axis = (treeRoot->axis + 1) % D;
-	    treeRoot->left = new KDTreeNode{axis};
-	    treeRoot->right = new KDTreeNode{axis};
-	    std::vector<Point<D> > leftPoints{points.begin(),
-		    points.begin() + middleIndex};
-	    std::vector<Point<D> > rightPoints{points.begin() + middleIndex,
-		    points.end()};
-	    if (leftPoints.size() > 0) {
-		createTree(leftPoints, treeRoot->left);
-	    }
-	    if (rightPoints.size() > 0) {
-		createTree(rightPoints, treeRoot->right);
-	    }
-	}
-	if (points.size() == 1) {
-	    treeRoot->point = points[0];
-	}
+  KDTreeNode* createTree(std::vector<Point<D>> points, int depth) {
+    int axis = depth % D;
+    std::sort(points.begin(), points.end(),
+              [axis](const Point<D>& a, const Point<D>& b) {
+                return a[axis] < b[axis];
+              });
+    if (points.size() == 1) {
+      return new KDTreeNode{axis, points[0]};
+    } else if (points.size() < 1) {
+      return nullptr;
     }
+    size_t middleIndex = points.size() / 2;
+    KDTreeNode* node = new KDTreeNode{axis, points[middleIndex]};
+    node->point = points[middleIndex];
+    node->left =
+        createTree({points.begin(), points.begin() + middleIndex}, depth + 1);
+    node->right =
+        createTree({points.begin() + middleIndex, points.end()}, depth + 1);
+    return node;
+  }
 
     Point<D> nns(const Point<D>& point) {
 	double infinity = DBL_MAX;

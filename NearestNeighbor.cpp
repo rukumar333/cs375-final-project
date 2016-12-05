@@ -1,7 +1,7 @@
 #include "NearestNeighbor.hpp"
 
 void run_tests() {
-  auto cloud = generate_point_cloud<3>(3e3, {-100.0, 100.0});
+  auto cloud = generate_point_cloud<3>(3e5, {-100.0, 100.0});
   auto point = random_point<3>({-100.0, 100.0});
   std::cout << "---------- Brute Force Method ---------- " << std::endl;
   auto v = makeDecorator(brute_force<3>)(point, cloud, 1);
