@@ -1,5 +1,5 @@
-#ifndef KDTREE_HPP
-#define KDTREE_HPP
+#ifndef KDTREE_HPP_
+#define KDTREE_HPP_
 
 #include <algorithm>
 #include <cfloat>
@@ -8,10 +8,10 @@
 
 template <size_t D>
 class KDTree {
-private:
-    class KDTreeNode {
-    public:
-	/* Constructors */
+ private:
+  class KDTreeNode {
+   public:
+    /* Constructors */
     KDTreeNode() : KDTreeNode{0, 0} {}
     KDTreeNode(int axis) : KDTreeNode{axis, 0} {}
     KDTreeNode(int axis, double value)
@@ -21,34 +21,32 @@ private:
     KDTreeNode(const Point<D>& point, int axis, double value, KDTreeNode* left,
                KDTreeNode* right)
         : point{point}, axis{axis}, value{value}, left{left}, right{right} {}
-	/**
-	 * Deep destructor
-	 */
-	~KDTreeNode() {
-	    if (left != nullptr) delete left;
-	    if (right != nullptr) delete right;
-	}
-	bool isLeaf() const { return left == nullptr && right == nullptr; }
-	Point<D> point;
-	int axis;
-	double value;
-	KDTreeNode* left;
-	KDTreeNode* right;
-    };
+    /**
+     * Deep destructor
+     */
+    ~KDTreeNode() {
+      if (left != nullptr) delete left;
+      if (right != nullptr) delete right;
+    }
+    bool isLeaf() const { return left == nullptr && right == nullptr; }
+    Point<D> point;
+    int axis;
+    double value;
+    KDTreeNode* left;
+    KDTreeNode* right;
+  };
 
-
-public:
-    KDTreeNode* root;
+ public:
+  KDTreeNode* root;
 
   KDTree(std::vector<Point<D>> points) : root{createTree(points, 0)} {}
+  ~KDTree() {
+    if (root != nullptr) delete root;
+  }
 
-    ~KDTree() {
-	if (root != nullptr) delete root;
-    }
-
-    void deleteNode(KDTreeNode* node) {
-	if (node != nullptr) delete node;
-    }
+  void deleteNode(KDTreeNode* node) {
+    if (node != nullptr) delete node;
+  }
 
   KDTreeNode* createTree(std::vector<Point<D>> points, int depth) {
     int axis = depth % D;
@@ -71,36 +69,36 @@ public:
     return node;
   }
 
-    Point<D> nns(const Point<D>& point) {
-	double infinity = DBL_MAX;
-	Point<D> nearestNeighbor{};
-	nnsRecurse(point, root, infinity, nearestNeighbor);
-	return nearestNeighbor;
-    }
+  Point<D> nns(const Point<D>& point) {
+    double infinity = DBL_MAX;
+    Point<D> nearestNeighbor{};
+    nnsRecurse(point, root, infinity, nearestNeighbor);
+    return nearestNeighbor;
+  }
 
-    void nnsRecurse(const Point<D>& point, KDTreeNode* node, double& radius,
-		    Point<D>& nearestNeighbor) {
-	if (node == nullptr) return;
-	if (node->isLeaf()) {
-	    double pointsDistance = distance(point, node->point);
-	    if (radius > pointsDistance) {
-		radius = pointsDistance;
-		nearestNeighbor = node->point;
-	    }
-	} else {
-	    if (point[node->axis] < node->value) {
-		nnsRecurse(point, node->left, radius, nearestNeighbor);
-		if(radius == DBL_MAX || point[node->axis] + radius >= node->value){
-		    nnsRecurse(point, node->right, radius, nearestNeighbor);   
-		}
-	    } else {
-		nnsRecurse(point, node->right, radius, nearestNeighbor);
-		if(radius == DBL_MAX || point[node->axis] - radius < node->value){		    
-		    nnsRecurse(point, node->left, radius, nearestNeighbor);
-		}
-	    }
-	}
+  void nnsRecurse(const Point<D>& point, KDTreeNode* node, double& radius,
+                  Point<D>& nearestNeighbor) {
+    if (node == nullptr) return;
+    if (node->isLeaf()) {
+      double pointsDistance = distance(point, node->point);
+      if (radius > pointsDistance) {
+        radius = pointsDistance;
+        nearestNeighbor = node->point;
+      }
+    } else {
+      if (point[node->axis] < node->value) {
+        nnsRecurse(point, node->left, radius, nearestNeighbor);
+        if (radius == DBL_MAX || point[node->axis] + radius >= node->value) {
+          nnsRecurse(point, node->right, radius, nearestNeighbor);
+        }
+      } else {
+        nnsRecurse(point, node->right, radius, nearestNeighbor);
+        if (radius == DBL_MAX || point[node->axis] - radius < node->value) {
+          nnsRecurse(point, node->left, radius, nearestNeighbor);
+        }
+      }
     }
+  }
 };
 
-#endif
+#endif  // KDTREE_HPP_

@@ -1,3 +1,6 @@
+#ifndef NEARESTNEIGHBOR_HPP_
+#define NEARESTNEIGHBOR_HPP_
+
 #include <algorithm>
 #include <chrono>
 #include <functional>
@@ -101,3 +104,4 @@ template <typename R, typename... Args>
 Decorator<R(Args...)> makeDecorator(R (*f)(Args...)) {
   return Decorator<R(Args...)>(std::function<R(Args...)>(f));
 }
+#endif  // NEARESTNEIGHBOR_HPP_
