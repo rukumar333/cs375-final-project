@@ -94,7 +94,6 @@ public:
 		nearestNeighbor = node->point;
 	    }
 	} else {
-	    // Check if hypersphere includes hyperplane
 	    if (point[node->axis] < node->value) {
 		nnsRecurse(point, node->left, radius, nearestNeighbor);
 		if(radius == DBL_MAX || point[node->axis] + radius >= node->value){
