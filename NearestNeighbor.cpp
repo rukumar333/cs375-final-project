@@ -17,8 +17,5 @@ void run_tests() {
   auto nearestNeighbor = makeDecorator(kd_tree_nns<3>)(point, kdTree);
   std::cout << "Closest point to " << point << std::endl;
   std::cout << nearestNeighbor << std::endl;
-  std::cout << "Distance: " << distance(cloud[0], nearestNeighbor) << std::endl;
-  if(distance(cloud[0], nearestNeighbor) != distance(cloud[0], v[0])){
-      run_kd_test(cloud[0], cloud);
-  }
+  std::cout << "Distance: " << distance(point, nearestNeighbor) << std::endl;
 }
