@@ -13,27 +13,31 @@ class KDTree {
    public:
     /* Constructors */
     KDTreeNode() : KDTreeNode{0, 0} {}
-    KDTreeNode(int axis) : KDTreeNode{axis, 0} {}
-    KDTreeNode(int axis, double value)
+    KDTreeNode(size_t axis) : KDTreeNode{axis, 0} {}
+    KDTreeNode(size_t axis, double value)
         : KDTreeNode{{}, axis, value, nullptr, nullptr} {}
-    KDTreeNode(int axis, Point<D> point)
+    KDTreeNode(size_t axis, Point<D> point)
         : KDTreeNode{point, axis, point[axis], nullptr, nullptr} {}
-    KDTreeNode(const Point<D>& point, int axis, double value, KDTreeNode* left,
-               KDTreeNode* right)
-        : point{point}, axis{axis}, value{value}, left{left}, right{right} {}
+    KDTreeNode(const Point<D>& point, size_t axis, double value,
+               KDTreeNode* left, KDTreeNode* right)
+        : point_{point},
+          axis_{axis},
+          value_{value},
+          left_{left},
+          right_{right} {}
     /**
      * Deep destructor
      */
     ~KDTreeNode() {
-      if (left != nullptr) delete left;
-      if (right != nullptr) delete right;
+      if (left_ != nullptr) delete left_;
+      if (right_ != nullptr) delete right_;
     }
-    bool isLeaf() const { return left == nullptr && right == nullptr; }
-    Point<D> point;
-    int axis;
-    double value;
-    KDTreeNode* left;
-    KDTreeNode* right;
+    bool isLeaf() const { return left_ == nullptr && right_ == nullptr; }
+    Point<D> point_;
+    size_t axis_;
+    double value_;
+    KDTreeNode* left_;
+    KDTreeNode* right_;
   };
 
  public:
@@ -48,8 +52,8 @@ class KDTree {
     if (node != nullptr) delete node;
   }
 
-  KDTreeNode* createTree(std::vector<Point<D>> points, int depth) {
-    int axis = depth % D;
+  KDTreeNode* createTree(std::vector<Point<D>> points, size_t depth) {
+    size_t axis = depth % D;
     std::sort(points.begin(), points.end(),
               [axis](const Point<D>& a, const Point<D>& b) {
                 return a[axis] < b[axis];
@@ -59,13 +63,13 @@ class KDTree {
     } else if (points.size() < 1) {
       return nullptr;
     }
-    size_t middleIndex = points.size() / 2;
+    size_t middleIndex = points.size() / 2;  // For indexing points
+    int midInc = middleIndex;                // For adding to iterator
     KDTreeNode* node = new KDTreeNode{axis, points[middleIndex]};
-    node->point = points[middleIndex];
-    node->left =
-        createTree({points.begin(), points.begin() + middleIndex}, depth + 1);
-    node->right =
-        createTree({points.begin() + middleIndex, points.end()}, depth + 1);
+    node->left_ =
+        createTree({points.begin(), points.begin() + midInc}, depth + 1);
+    node->right_ =
+        createTree({points.begin() + midInc, points.end()}, depth + 1);
     return node;
   }
 
@@ -80,22 +84,22 @@ class KDTree {
                   Point<D>& nearestNeighbor) {
     if (node == nullptr) return;
     if (node->isLeaf()) {
-      double pointsDistance = distance(point, node->point);
+      double pointsDistance = distance(point, node->point_);
       if (radius > pointsDistance) {
         radius = pointsDistance;
-        nearestNeighbor = node->point;
+        nearestNeighbor = node->point_;
+      }
+      return;
+    }
+    if (point[node->axis_] < node->value_) {
+      nnsRecurse(point, node->left_, radius, nearestNeighbor);
+      if (radius == DBL_MAX || point[node->axis_] + radius >= node->value_) {
+        nnsRecurse(point, node->right_, radius, nearestNeighbor);
       }
     } else {
-      if (point[node->axis] < node->value) {
-        nnsRecurse(point, node->left, radius, nearestNeighbor);
-        if (radius == DBL_MAX || point[node->axis] + radius >= node->value) {
-          nnsRecurse(point, node->right, radius, nearestNeighbor);
-        }
-      } else {
-        nnsRecurse(point, node->right, radius, nearestNeighbor);
-        if (radius == DBL_MAX || point[node->axis] - radius < node->value) {
-          nnsRecurse(point, node->left, radius, nearestNeighbor);
-        }
+      nnsRecurse(point, node->right_, radius, nearestNeighbor);
+      if (radius == DBL_MAX || point[node->axis_] - radius < node->value_) {
+        nnsRecurse(point, node->left_, radius, nearestNeighbor);
       }
     }
   }
