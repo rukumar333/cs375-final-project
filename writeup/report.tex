@@ -1,0 +1,101 @@
+\documentclass[a4paper,12pt,twocolumn]{article}
+
+\usepackage[english]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage[pdftex]{graphicx}
+\usepackage{xcolor}
+\usepackage{fourier}
+\usepackage[protrusion=true,expansion=true]{microtype}
+\usepackage[colorinlistoftodos]{todonotes}
+\usepackage{fancyhdr}
+\usepackage{enumitem}
+\usepackage{listings}
+\lstset{basicstyle=\footnotesize\ttfamily,breaklines=true}
+\lstset{frame=tb,language=C,numbers=left,showstringspaces=false}
+\renewcommand{\lstlistingname}{Code Block}
+
+\usepackage{geometry}
+\geometry{total={210mm,297mm},
+left=25mm, right=25mm,
+bindingoffset=0mm,
+top=20mm, bottom=20mm}
+
+\usepackage[
+  pdftitle={Nearest Neighbor Search},
+  pdfauthor={William Jagels, Rushil Kumar},
+  colorlinks=true,linkcolor=blue,urlcolor=blue,
+  citecolor=blue,bookmarks=true,bookmarksopenlevel=2
+]{hyperref}
+
+\usepackage{titlesec}
+\titlelabel{\thetitle.\quad}
+
+\def\code#1{\texttt{#1}}
+
+\title{Nearest Neighbor Search}
+
+\author{William Jagels and Rushil Kumar}
+
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+  In this paper, we set out to research and implement algorithms for Nearest Neighbor Search (NNS).
+  Our implementation is able to make point clouds with arbitrary dimensional points.
+  The nearest neighbor is also suited to work with these point clouds at any dimension.
+  We discuss our testing results and compare our implementation to other common implementations
+\end{abstract}
+
+\section{Problem}
+Given a target point, and a list of other points, find the closest point to the target.
+This problem appears in the everyday world, such as finding the nearest stores on a
+retailer's website or finding the closest airport for an aircraft in distress.
+Although many appearances of this problem are trivially solved by a linear search,
+sometimes a more efficient algorithm is needed.
+
+\section{k-Nearest Neighbors}
+We can observe that with the regular NNS problem, it is impossible to get any better than
+$\Theta(N)$ time unless we can make assumptions about the ordering of our point cloud.
+In the k-NNS problem, where we find the closest $k$ neighbors, our naïve linear search
+will degenerate into a $\Theta(kN)$ time complexity algorithm.
+At larger values of $k$, it becomes clear that a linear search is no longer reasonable.
+
+\section{k-Dimensional Tree}
+One data structure commonly used to solve the NNS problem is a k-dimensional(k-d) tree.
+A k-d tree is a binary search tree that is sorted in multiple dimensions, allowing
+for a $O(n \log n)$ search time.
+This data structure uses space partitioning to achieve its performance characteristics.
+At each level of a k-d tree, there is a specified axis that the left and right subtrees
+are divided by.
+We implemented and used a k-d tree specifically for nearest neighbor search, but it can
+also be used for problems such as range searching.
+
+\section{k-d Tree NNS}
+We implemented a nearest neighbor search that works for our k-d tree implementation,
+and found that it could reliably find the nearest neighbor to a point very quickly.
+% TODO: write more
+
+\section{Results}
+Using $3*10^6$ points in 3 dimensions, linear search takes on the order of $10^{-2}$s.
+On the same test, k-d tree construction takes on the order of $10^0$s, and NNS takes
+on the order of $10^{-6}$s.
+It is important to note that the k-d tree construction only has to happen once per point
+cloud, and any additional nearest neighbor searches will take the same amount of time.
+Since the k-d tree construction is slower by a factor of $10^2$, if we perform any more
+than $10^2$ searches, we should see a performance gain over the linear search.
+$10^2$ searches may seem large, however, that is $0.0033\%$ of the size of the point cloud.
+
+\section{Analysis}
+Our tests revealed that our NNS algorithm is very fast on an already created k-d tree, but
+the k-d tree construction is rather inefficient.
+Rather than attempt to optimize our own k-d tree (reinventing the wheel), we adapted
+our code to run on more popular k-d tree implementations.
+
+\section{Further Testing}
+% TODO: write this part
+
+\end{document}
