@@ -71,8 +71,21 @@ for a $O(\log n)$ search time.
 This data structure uses space partitioning to achieve its performance characteristics.
 At each level of a k-d tree, there is a specified axis that the left and right subtrees
 are divided by.
+As with a binary tree, it is important to have a balanced k-d tree to maintain $O(\log n)$
+search time. Given an initial point cloud, the k-d tree was kept balanced by finding a
+value in the dimension such that the axis would partition the set of points evenly. To do
+this, for each set of points encountered, they were sorted with respect to the particular
+dimension in $O(n \log n)$ time. Then the value of the dimension being examined for the
+middle indexed point is used to split the points into two equal halves.
+The algorithm works by taking the initial point cloud of N points and partitioning it
+based on the first dimension. The left partition and right partitios are then recursively
+made into k-d trees incrementing the dimension used by one until it rolls over and reaches
+back to the first dimension. At each partition, the node holds the dimension being partitioned
+along with the value used to partition it. In the recursive calls, once there is only one point
+left, that node is a leaf and holds that sole point.
 We implemented and used a k-d tree specifically for nearest neighbor search, but it can
 also be used for problems such as range searching.
+
 
 \section{k-d Tree NNS}
 We implemented a nearest neighbor search that works for our k-d tree implementation,
