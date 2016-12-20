@@ -67,7 +67,7 @@ At larger values of $k$, it becomes clear that a linear search is no longer reas
 \section{k-Dimensional Tree}
 One data structure commonly used to solve the NNS problem is a k-dimensional(k-d) tree.
 A k-d tree is a binary search tree that is sorted in multiple dimensions, allowing
-for a $O(n \log n)$ search time.
+for a $O(\log n)$ search time.
 This data structure uses space partitioning to achieve its performance characteristics.
 At each level of a k-d tree, there is a specified axis that the left and right subtrees
 are divided by.
@@ -77,7 +77,24 @@ also be used for problems such as range searching.
 \section{k-d Tree NNS}
 We implemented a nearest neighbor search that works for our k-d tree implementation,
 and found that it could reliably find the nearest neighbor to a point very quickly.
-% TODO: write more
+The algorithm used a search similar to binary search along with the branch and bound
+technique. An initial point is searched for using a binary search with regards to the
+dimension partitioned for that particular level of the tree. For example, for 3D,
+the first level of the tree splits the points into two by the x-axis. In the next level,
+the points are split by the y-axis and then in the next level after that by the z-axis.
+Once the initial point is found, a possible shortest distance - SD is found to that point.
+After this, the algorithm continues to backtrack to partitions and checks the opposite
+side of the axis that was not originally checked. This SD is used to check for the branch
+and bound technique since points outside of a radius of distance SD away from the search
+point do not need to be examined. The shape formed by this radius is called the hypersphere.
+When looking at a partition of a particular axis, if the hypersphere does not cross that
+axis of the partition (called the hyperplane), then there is no need to check the side of
+the hyperplane the partition does not cross into. For example, with a search point (0, 0) a
+SD of 5, and a x-axis splitting the points by the value of x=7, the right side of the partition
+does not need to be checked. All points to the right of the hyperplane will be at a distance
+greater than 5 units away from the test point and therefore do not need to be checked.
+This reduces the number of nodes that are checked and leads to a $O(\log n)$ search time.
+% #TODO: will can you check if this sounds good
 
 \section{Results}
 Using $3*10^6$ points in 3 dimensions, linear search takes on the order of $10^{-2}$s.
