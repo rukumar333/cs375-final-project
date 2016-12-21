@@ -54,22 +54,37 @@ class KDTree {
 
   KDTreeNode* createTree(std::vector<Point<D>> points, size_t depth) {
     size_t axis = depth % D;
-    std::sort(points.begin(), points.end(),
-              [axis](const Point<D>& a, const Point<D>& b) {
-                return a[axis] < b[axis];
-              });
     if (points.size() == 1) {
       return new KDTreeNode{axis, points[0]};
     } else if (points.size() < 1) {
       return nullptr;
     }
-    size_t middleIndex = points.size() / 2;  // For indexing points
-    int midInc = middleIndex;                // For adding to iterator
-    KDTreeNode* node = new KDTreeNode{axis, points[middleIndex]};
-    node->left_ =
-        createTree({points.begin(), points.begin() + midInc}, depth + 1);
-    node->right_ =
-        createTree({points.begin() + midInc, points.end()}, depth + 1);
+    if (points.size() <= 5) {
+      std::sort(points.begin(), points.end(),
+                [axis](const Point<D>& a, const Point<D>& b) {
+                  return a[axis] < b[axis];
+                });
+      size_t middleIndex = points.size() / 2;  // For indexing points
+      int midInc = middleIndex;                // For adding to iterator
+      KDTreeNode* node = new KDTreeNode{axis, points[middleIndex]};
+      node->left_ =
+          createTree({points.begin(), points.begin() + midInc}, depth + 1);
+      node->right_ =
+          createTree({points.begin() + midInc, points.end()}, depth + 1);
+      return node;
+    }
+    std::vector<Point<D>> sample{points.begin(), points.begin() + 5};
+    std::sort(sample.begin(), sample.end(),
+              [axis](const Point<D>& a, const Point<D>& b) {
+                return a[axis] < b[axis];
+              });
+    KDTreeNode* node = new KDTreeNode{axis, sample[2]};
+    points.erase(std::find(points.begin(), points.end(), sample[2]));
+    auto mid = std::partition(
+        points.begin(), points.end(),
+        [axis, sample](const auto& e) { return e[axis] < sample[2][axis]; });
+    node->left_ = createTree({points.begin(), mid}, depth + 1);
+    node->right_ = createTree({mid, points.end()}, depth + 1);
     return node;
   }
 

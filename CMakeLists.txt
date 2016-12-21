@@ -1,39 +1,32 @@
-cmake_minimum_required(VERSION 2.8.12 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.2 FATAL_ERROR)
 project(NearestNeighbor)
 set(CMAKE_BUILD_TYPE Release)
 
+add_subdirectory(third_party)
+find_package(PCL 1.8 REQUIRED COMPONENTS common kdtree)
+include_directories(${PCL_INCLUDE_DIRS})
+link_directories(${PCL_LIBRARY_DIRS})
+add_definitions(${PCL_DEFINITIONS})
+
 ## C++11 support
-if(NOT ${CMAKE_VERSION} LESS 3.2)
-    set(CMAKE_CXX_STANDARD 11)
-    set(CMAKE_CXX_STANDARD_REQUIRED ON)
-else()
-    message(STATUS "Checking compiler flags for C++11 support.")
-    # Set C++11 support flags for various compilers
-    include(CheckCXXCompilerFlag)
-    check_cxx_compiler_flag("-std=c++11" COMPILER_SUPPORTS_CXX11)
-    check_cxx_compiler_flag("-std=c++0x" COMPILER_SUPPORTS_CXX0X)
-    if(COMPILER_SUPPORTS_CXX11)
-        message(STATUS "C++11 is supported.")
-        if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-            set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -stdlib=libc++")
-        else()
-            set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-        endif()
-    elseif(COMPILER_SUPPORTS_CXX0X)
-        message(STATUS "C++0x is supported.")
-        if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-            set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x -stdlib=libc++")
-        else()
-            set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
-        endif()
-    else()
-        message(STATUS "The compiler ${CMAKE_CXX_COMPILER} has no C++11 support. Please use a different C++ compiler.")
-    endif()
-endif()
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 ## Increase warning levels
 if(CMAKE_COMPILER_IS_GNUCXX)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pedantic -Wall -Wextra -Wcast-align -Wcast-qual -Wctor-dtor-privacy -Wdisabled-optimization -Wformat=2 -Winit-self -Wlogical-op -Wmissing-declarations -Wmissing-include-dirs -Wnoexcept -Wold-style-cast -Woverloaded-virtual -Wredundant-decls -Wshadow -Wsign-conversion -Wsign-promo -Wstrict-null-sentinel -Wstrict-overflow=5 -Wswitch-default -Wundef -Werror")
+    # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pedantic -Wall -Wextra -Wcast-align -Wcast-qual -Wctor-dtor-privacy -Wdisabled-optimization -Wformat=2 -Winit-self -Wlogical-op -Wmissing-declarations -Wmissing-include-dirs -Wnoexcept -Wold-style-cast -Woverloaded-virtual -Wredundant-decls -Wshadow -Wsign-conversion -Wsign-promo -Wstrict-null-sentinel -Wstrict-overflow=5 -Wswitch-default -Wundef -Werror")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g")
 endif()
 
-add_executable(main.exe main.cpp NearestNeighbor.cpp)
+add_executable(main.exe main.cpp NearestNeighbor.cpp external.cpp)
+target_compile_features(main.exe PRIVATE
+    cxx_aggregate_default_initializers
+    cxx_lambdas
+    cxx_nullptr
+    cxx_auto_type
+    cxx_generalized_initializers
+    cxx_range_for
+    cxx_uniform_initialization
+    cxx_delegating_constructors)
+target_link_libraries(main.exe ${PCL_COMMON_LIBRARIES} ${PCL_IO_LIBRARIES})
+target_include_directories(main.exe PUBLIC third_party/nanoflann/include)
