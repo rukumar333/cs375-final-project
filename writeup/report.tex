@@ -12,6 +12,7 @@
 \usepackage{fancyhdr}
 \usepackage{enumitem}
 \usepackage{listings}
+\usepackage{graphicx}
 \lstset{basicstyle=\footnotesize\ttfamily,breaklines=true}
 \lstset{frame=tb,language=C,numbers=left,showstringspaces=false}
 \renewcommand{\lstlistingname}{Code Block}
@@ -65,6 +66,7 @@ will degenerate into a $\Theta(kN)$ time complexity algorithm.
 At larger values of $k$, it becomes clear that a linear search is no longer reasonable.
 
 \section{k-Dimensional Tree}
+\break
 One data structure commonly used to solve the NNS problem is a k-dimensional(k-d) tree.
 A k-d tree is a binary search tree that is sorted in multiple dimensions, allowing
 for a $O(\log n)$ search time.
@@ -118,14 +120,22 @@ cloud, and any additional nearest neighbor searches will take the same amount of
 Since the k-d tree construction is slower by a factor of $10^2$, if we perform any more
 than $10^2$ searches, we should see a performance gain over the linear search.
 $10^2$ searches may seem large, however, that is $0.0033\%$ of the size of the point cloud.
+\includegraphics[width=10cm]{results.png}
 
 \section{Analysis}
 Our tests revealed that our NNS algorithm is very fast on an already created k-d tree, but
 the k-d tree construction is rather inefficient.
-Rather than attempt to optimize our own k-d tree (reinventing the wheel), we adapted
-our code to run on more popular k-d tree implementations.
+This is due to the $O(n \log^2 n)$ behavior of the tree constructor.
+The NNS search is not deterministic in its running time as the point cloud and the search
+point are random, making it hard to measure well.
+However, the running time of the NNS algorithm is so small that there are also other factors
+at play, such as clock precision and other programs running on the system.
+When many NNS searches are required, using a k-d tree is a good way to cut down on runtime.
+Additionally, our NNS search is safe to run in parallel, meaning that a series of worker
+threads can be used to speed up large batches of searches on a multiprocessor system.
 
-\section{Further Testing}
-% TODO: write this part
+\section{Code}
+The code provided is written in C++14, which requires a compiler with support for it.
+
 
 \end{document}
