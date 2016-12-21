@@ -1,0 +1,9 @@
+In order to run this code on remote.cs, the following is required.
+
+exec bash
+export LD_RUN_PATH=/home/kchiu/packages/linux-x86_64/libexec/gcc/x86_64-unknown-linux-gnu/6.1.0:/home/kchiu/packages/linux-x86_64/lib/gcc/x86_64-unknown-linux-gnu/6.1.0/plugin:/home/kchiu/packages/linux-x86_64/lib64:/home/kchiu/packages/linux-x86_64/lib32
+export PATH=/home/kchiu/packages/linux-x86_64/bin:$PATH
+
+Then, you may compile the program using the provided Makefile, or with CMake if you have an up
+to date version of it.
+The most interesting code is in KDTree.hpp and NearestNeighbor.hpp.
